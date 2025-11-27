@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5
+
+//Cola Circular
+typedef struct {
+    int datos[MAX];
+    int frente;
+    int final;
+    int size;
+} ColaCircular;
+
+//Inicialización
+void inicializarCola(ColaCircular *c) {
+    c->frente = 0;
+    c->final = 0;
+    c->size = 0;
+    printf("Cola circular inicializada\n");
+}
+
+//Operaciones
+int isEmpty(ColaCircular *c) {
+    return c->size == 0;
+}
+
+int isFull(ColaCircular *c) {
+    return c->size == MAX;
+}
+
+void enqueue(ColaCircular *c, int valor) {
+    if (isFull(c)) {
+        printf("Error: La cola está llena\n");
+        return;
+    }
+    c->datos[c->final] = valor;
+    c->final = (c->final + 1) % MAX;
+    c->size++;
+    printf("Elemento %d encolado\n", valor);
+}
+
+int dequeue(ColaCircular *c) {
+    if (isEmpty(c)) {
+        printf("Error: La cola está vacía\n");
+        return -1;
+    }
+    int valor = c->datos[c->frente];
+    c->frente = (c->frente + 1) % MAX;
+    c->size--;
+    return valor;
+}
+
+int peek(ColaCircular *c) {
+    if (isEmpty(c)) {
+        printf("Cola vacía, no hay frente\n");
+        return -1;
+    }
+    return c->datos[c->frente];
+}
+
+void printQueue(ColaCircular *c) {
+    if (isEmpty(c)) {
+        printf("Cola vacía\n");
+        return;
+    }
+    printf("Estado de la cola: ");
+    int i = c->frente;
+    for (int count = 0; count < c->size; count++) {
+        printf("%d ", c->datos[i]);
+        i = (i + 1) % MAX;
+    }
+    printf("\n");
+}
+
+// MAIN
+int main() {
+    ColaCircular cola;
+    inicializarCola(&cola);
+
+    // Encolar 5, 10, 15
+    enqueue(&cola, 5);
+    enqueue(&cola, 10);
+    enqueue(&cola, 15);
+    printQueue(&cola);
+
+    //Desencolar uno
+    int elem = dequeue(&cola);
+    printf("Elemento desencolado: %d\n", elem);
+    printQueue(&cola);
+
+    //Encolar 20, 25, 30
+    enqueue(&cola, 20);
+    enqueue(&cola, 25);
+    enqueue(&cola, 30);
+    printQueue(&cola);
+
+    return 0;
+}
