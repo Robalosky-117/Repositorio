@@ -1,0 +1,239 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Nodo 
+typedef struct Nodo {
+    int dato;
+    struct Nodo *sig;
+} Nodo;
+
+// Funciones básicas
+void insertarInicio(Nodo **cabeza, int valor) {
+    Nodo *nuevo = (Nodo*)malloc(sizeof(Nodo));
+    nuevo->dato = valor;
+    nuevo->sig = *cabeza;
+    *cabeza = nuevo;
+    printf("Insertado %d al inicio\n", valor);
+}
+
+void recorrer(Nodo *cabeza) {
+    Nodo *actual = cabeza;
+    printf("Lista: ");
+    while (actual != NULL) {
+        printf("%d -> ", actual->dato);
+        actual = actual->sig;
+    }
+    printf("NULL\n");
+}
+
+void eliminar(Nodo **cabeza, int valor) {
+    if (*cabeza == NULL) {
+        printf("Lista vacía, no se puede eliminar\n");
+        return;
+    }
+
+    Nodo *actual = *cabeza;
+    Nodo *anterior = NULL;
+
+    // Caso: valor en la cabeza
+    if (actual->dato == valor) {
+        *cabeza = actual->sig;
+        free(actual);
+        printf("Valor %d eliminado de la cabeza\n", valor);
+        return;
+    }
+
+    // Caso: valor en medio o final
+    while (actual != NULL && actual->dato != valor) {
+        anterior = actual;
+        actual = actual->sig;
+    }
+
+    if (actual == NULL) {
+        printf("Valor %d no encontrado en la lista\n", valor);
+        return;
+    }
+
+    anterior->sig = actual->sig;
+    free(actual);
+    printf("Valor %d eliminado\n", valor);
+}
+
+void liberar(Nodo *cabeza) {
+    Nodo *actual = cabeza;
+    while (actual != NULL) {
+        Nodo *temp = actual;
+        actual = actual->sig;
+        free(temp);
+    }
+    printf("Memoria liberada correctamente\n");
+}
+
+// MAIN 
+int main() {
+    Nodo *cabeza = NULL;
+    int n, valor;
+
+    //Inserción
+    printf("¿Cuántos valores desea insertar? ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Ingrese valor %d: ", i + 1);
+        scanf("%d", &valor);
+        insertarInicio(&cabeza, valor);
+        recorrer(cabeza);
+    }
+
+    //Recorrido y eliminación
+    printf("\nRecorrido de la lista:\n");
+    recorrer(cabeza);
+
+    printf("¿Qué valor desea eliminar? ");
+    scanf("%d", &valor);
+    eliminar(&cabeza, valor);
+
+    printf("Lista después de eliminar:\n");
+    recorrer(cabeza);
+
+    //Liberación de memoria
+    liberar(cabeza);
+
+    return 0;
+}
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+//  Nodo 
+typedef struct Nodo {
+    int dato;
+    struct Nodo *sig;
+} Nodo;
+
+// Punteros globales para cabeza y último
+Nodo *cabeza = NULL;
+Nodo *ultimo = NULL;
+
+// Inserción circular al inicio
+void insertarInicioCircular(int valor) {
+    Nodo *nuevo = (Nodo*)malloc(sizeof(Nodo));
+    nuevo->dato = valor;
+
+    if (cabeza == NULL) {
+        // Primer nodo: apunta a sí mismo
+        cabeza = nuevo;
+        ultimo = nuevo;
+        nuevo->sig = cabeza;
+    } else {
+        nuevo->sig = cabeza;
+        cabeza = nuevo;
+        ultimo->sig = cabeza; // último apunta al nuevo inicio
+    }
+    printf("Insertado %d al inicio\n", valor);
+}
+
+// Recorrido circular
+void recorrerCircular() {
+    if (cabeza == NULL) {
+        printf("Lista vacía\n");
+        return;
+    }
+    Nodo *actual = cabeza;
+    printf("Lista circular: ");
+    do {
+        printf("%d -> ", actual->dato);
+        actual = actual->sig;
+    } while (actual != cabeza);
+    printf("(vuelve a cabeza)\n");
+}
+
+//  Eliminación circular
+void eliminarCircular(int valor) {
+    if (cabeza == NULL) {
+        printf("Lista vacía, no se puede eliminar\n");
+        return;
+    }
+
+    Nodo *actual = cabeza;
+    Nodo *anterior = ultimo;
+
+    // Buscar el nodo
+    do {
+        if (actual->dato == valor) {
+            if (actual == cabeza) {
+                // Caso: eliminar cabeza
+                cabeza = cabeza->sig;
+                ultimo->sig = cabeza;
+                if (actual == ultimo) { // si era el único nodo
+                    cabeza = NULL;
+                    ultimo = NULL;
+                }
+            } else {
+                // Caso: nodo intermedio o final
+                anterior->sig = actual->sig;
+                if (actual == ultimo) {
+                    ultimo = anterior;
+                }
+            }
+            free(actual);
+            printf("Valor %d eliminado\n", valor);
+            return;
+        }
+        anterior = actual;
+        actual = actual->sig;
+    } while (actual != cabeza);
+
+    printf("Valor %d no encontrado\n", valor);
+}
+
+// Liberar memoria
+void liberarCircular() {
+    if (cabeza == NULL) {
+        printf("Lista vacía\n");
+        return;
+    }
+    Nodo *actual = cabeza;
+    do {
+        Nodo *temp = actual;
+        actual = actual->sig;
+        free(temp);
+    } while (actual != cabeza);
+    cabeza = NULL;
+    ultimo = NULL;
+    printf("Memoria liberada correctamente\n");
+}
+
+// MAIN 
+int main() {
+    int n, valor;
+
+    // Inserción circular
+    printf("¿Cuántos valores desea insertar? ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Ingrese valor %d: ", i + 1);
+        scanf("%d", &valor);
+        insertarInicioCircular(valor);
+        recorrerCircular();
+    }
+
+    // Recorrido
+    printf("\nRecorrido completo de la lista circular:\n");
+    recorrerCircular();
+
+    // Eliminación
+    printf("¿Qué valor desea eliminar? ");
+    scanf("%d", &valor);
+    eliminarCircular(valor);
+
+    printf("Lista después de eliminar:\n");
+    recorrerCircular();
+
+    // Liberar memoria
+    liberarCircular();
+
+    return 0;
+}
