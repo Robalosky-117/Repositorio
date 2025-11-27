@@ -96,3 +96,146 @@ int main() {
 
     return 0;
 }
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5
+
+//Deque 
+typedef struct {
+    int datos[MAX];
+    int front;
+    int size;
+} Deque;
+
+// Paso B1: Inicialización
+void inicializarDeque(Deque *d) {
+    d->front = 0;
+    d->size = 0;
+    printf("Deque inicializado\n");
+}
+
+int isEmpty(Deque *d) {
+    return d->size == 0;
+}
+
+int isFull(Deque *d) {
+    return d->size == MAX;
+}
+
+int rearIndex(Deque *d) {
+    return (d->front + d->size - 1) % MAX;
+}
+
+//Operaciones
+void insert_front(Deque *d, int valor) {
+    if (isFull(d)) {
+        printf("Error: Deque lleno\n");
+        return;
+    }
+    d->front = (d->front - 1 + MAX) % MAX;
+    d->datos[d->front] = valor;
+    d->size++;
+    printf("Insertado %d al frente\n", valor);
+}
+
+void insert_rear(Deque *d, int valor) {
+    if (isFull(d)) {
+        printf("Error: Deque lleno\n");
+        return;
+    }
+    int rear = (d->front + d->size) % MAX;
+    d->datos[rear] = valor;
+    d->size++;
+    printf("Insertado %d al final\n", valor);
+}
+
+int delete_front(Deque *d) {
+    if (isEmpty(d)) {
+        printf("Error: Deque vacío\n");
+        return -1;
+    }
+    int valor = d->datos[d->front];
+    d->front = (d->front + 1) % MAX;
+    d->size--;
+    return valor;
+}
+
+int delete_rear(Deque *d) {
+    if (isEmpty(d)) {
+        printf("Error: Deque vacío\n");
+        return -1;
+    }
+    int rear = rearIndex(d);
+    int valor = d->datos[rear];
+    d->size--;
+    return valor;
+}
+
+int peek_front(Deque *d) {
+    if (isEmpty(d)) {
+        printf("Deque vacío\n");
+        return -1;
+    }
+    return d->datos[d->front];
+}
+
+int peek_rear(Deque *d) {
+    if (isEmpty(d)) {
+        printf("Deque vacío\n");
+        return -1;
+    }
+    return d->datos[rearIndex(d)];
+}
+
+void printDeque(Deque *d) {
+    if (isEmpty(d)) {
+        printf("Deque vacío\n");
+        return;
+    }
+    printf("Estado del deque: ");
+    int i = d->front;
+    for (int count = 0; count < d->size; count++) {
+        printf("%d ", d->datos[i]);
+        i = (i + 1) % MAX;
+    }
+    printf("\n");
+    printf("Front = %d, Rear = %d, Size = %d\n", d->front, rearIndex(d), d->size);
+}
+
+// MAIN 
+int main() {
+    Deque d;
+    inicializarDeque(&d);
+
+    // insert_front(10)
+    insert_front(&d, 10);
+
+    // insert_rear(15), insert_rear(20)
+    insert_rear(&d, 15);
+    insert_rear(&d, 20);
+
+    // insert_front(30)
+    insert_front(&d, 30);
+
+    //insert_rear(40) → imprime estado
+    insert_rear(&d, 40);
+    printDeque(&d);
+
+    //delete_front() y delete_rear()
+    int f = delete_front(&d);
+    printf("Eliminado del frente: %d\n", f);
+    int r = delete_rear(&d);
+    printf("Eliminado del final: %d\n", r);
+    printDeque(&d);
+
+    //Inserta nuevos valores
+    insert_front(&d, 50);
+    insert_rear(&d, 60);
+    insert_front(&d, 70);
+    printDeque(&d);
+
+    return 0;
+}
+    
