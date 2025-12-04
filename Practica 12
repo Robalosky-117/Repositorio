@@ -1,0 +1,44 @@
+Bottom Up.py
+
+def fibonacci_bottom_up(n):
+    # Casos base
+    f_parciales = [0, 1]
+    
+    # Construcción iterativa
+    while len(f_parciales) <= n:
+        f_parciales.append(f_parciales[-1] + f_parciales[-2])
+    
+    return f_parciales[n]
+
+# Ejemplo
+print("Fibonacci Bottom-up (n=10):", fibonacci_bottom_up(10))
+
+
+Top Down.py
+
+def fibonacci_top_down(n, memoria={0:0, 1:1}):
+    if n in memoria:
+        return memoria[n]
+    memoria[n] = fibonacci_top_down(n-1, memoria) + fibonacci_top_down(n-2, memoria)
+    return memoria[n]
+
+# Ejemplo
+print("Fibonacci Top-down (n=10):", fibonacci_top_down(10))
+
+
+Divide and Conquer.py
+
+def quicksort(lista):
+    if len(lista) <= 1:
+        return lista
+    else:
+        pivote = lista[0]
+        menores = [x for x in lista[1:] if x <= pivote]
+        mayores = [x for x in lista[1:] if x > pivote]
+        return quicksort(menores) + [pivote] + quicksort(mayores)
+
+# Ejemplo
+lista = [21, 10, 0, 11, 9, 24, 20, 14, 1]
+print("Lista original:", lista)
+print("Lista ordenada con QuickSort:", quicksort(lista))
+
